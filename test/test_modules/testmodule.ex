@@ -1,9 +1,11 @@
 defmodule TestModule do
   use Ecbolic
 
-  # This module should not be loaded outside of the test environment
-  @on_load :test_only
-  def test_only, do: if(Mix.env() == :test, do: :ok)
+  @moduledoc false
+
+  # This modules should not be loaded in production
+  @on_load :not_prod
+  def not_prod, do: if(Mix.env() != :prod, do: :ok)
 
   @doc help: "returns `:world`"
   def hello, do: :world
