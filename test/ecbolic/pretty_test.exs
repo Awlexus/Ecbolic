@@ -1,8 +1,8 @@
 defmodule PrettyTest do
   use ExUnit.Case
-  doctest Helper.Pretty
+  doctest Ecbolic.Pretty
 
-  alias Helper.Pretty
+  alias Ecbolic.Pretty
 
   test "empty list or nil" do
     assert Pretty.format([]) == []
@@ -32,7 +32,7 @@ defmodule PrettyTest do
   end
 
   test "alignment" do
-    help = Helper.Pretty.format([:hello, :rem], ":f:a - :h")
+    help = Ecbolic.Pretty.format([:hello, :rem], ":f:a - :h")
 
     assert help == "hello - returns `:world`\nrem   - who is that?"
   end

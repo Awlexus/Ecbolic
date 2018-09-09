@@ -1,4 +1,4 @@
-defmodule Helper.Store do
+defmodule Ecbolic.Store do
   use GenServer
 
   require Logger
