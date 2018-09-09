@@ -21,12 +21,12 @@ defmodule TestModule do
 Then you can add document your functions like this:
 
 ```elixir
-  @doc help: "returns `:world`"
+@doc help: "returns `:world`"
 
-  @doc """
-  It's thanks to the 1.7 elixir update that we can add meta data to the @doc annotation
-  """
-  def hello, do: :world
+@doc """
+It's thanks to the 1.7 elixir update that we can add meta data to the @doc annotation
+"""
+def hello, do: :world
 ```
 
 At the start of your Application, or whenever you need it, you must load the documentation with with `load_help/0`
@@ -49,8 +49,8 @@ To access the documentations you can call the function `Ecbolic.help`, which com
 #### Example
 
 ```elixir
-  iex> Ecbolic.help(:hello)
-  "returns `:world`"
+Ecbolic.help(:hello)
+#=> "returns `:world`"
 ```
 
 ### Formating
@@ -58,8 +58,8 @@ To access the documentations you can call the function `Ecbolic.help`, which com
 The module `Ecbolic.Pretty` provides some basic formating:
 
 ```
-  iex(1)> Ecbolic.Pretty.format(:hello)
-  "hello - returns `world`"
+Ecbolic.Pretty.format(:hello)
+#=> "hello - returns `world`"
 ```
 
 You can provide your own format as a second parameter to `Ecbolic.Pretty.format/2`.
@@ -67,24 +67,27 @@ The default format is `":f - :h"`
 
 Currently these are the tokens available for formating:
 
-  - :f
-    Inserts the functions name
-  - :h
-    Inserts the documentation
-  - :a
-    If multiple entries are supplied, this token will align the strings, 
+  - `:f` 
+  
+  Inserts the functions name
+  - `:h` 
+  
+  Inserts the documentation
+  - `:a` 
+  
+  If multiple entries are supplied, this token will align the strings, 
     by filling them with spaces, until they all end at the same position.
 
     Example:
     ```elixir
-      iex(1)> Ecbolic.Pretty.format([:hello, :long_function_name]":f:a - :h")
-      [
-      	"hello              - returns `world`",
-	"long_function_name - Long description"
-      ]
+    Ecbolic.Pretty.format([:hello, :long_function_name], ":f:a - :h")
+    #=> [
+          "hello              - returns `world`",
+          "long_function_name - Long description"
+    ]
     ```
 
-    Note: if the function is not found, it'll be ignored
+  Note: if the function is not found, it'll be ignored
 
 ## Installation
 
