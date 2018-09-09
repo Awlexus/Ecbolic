@@ -1,5 +1,5 @@
-defmodule Helper.Pretty do
-  alias Helper.Store
+defmodule Ecbolic.Pretty do
+  alias Ecbolic.Store
 
   def format_all(format \\ ":f - :h") do
     Store.all()
@@ -23,7 +23,7 @@ defmodule Helper.Pretty do
   end
 
   def format(name, format) do
-    help = Helper.help(name)
+    help = Ecbolic.help(name)
 
     apply_tokens({name, help}, format)
     |> String.replace(":a", "")

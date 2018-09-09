@@ -3,7 +3,7 @@ defmodule Helper.MixProject do
 
   def project do
     [
-      app: :helper,
+      app: :ecbolic,
       version: "0.1.0",
       elixir: "~> 1.4",
       start_permanent: Mix.env() == :prod,
@@ -15,7 +15,7 @@ defmodule Helper.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Helper.Application, []}
+      mod: {Ecbolic.Application, []}
     ]
   end
 

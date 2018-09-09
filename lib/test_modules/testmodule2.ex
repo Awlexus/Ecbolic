@@ -1,5 +1,5 @@
 defmodule TestModule2 do
-  use Helper
+  use Ecbolic
 
   # This module should not be loaded outside of the test environment
   @on_load :test_only

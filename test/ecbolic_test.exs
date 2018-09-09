@@ -1,19 +1,18 @@
-defmodule HelperTest do
+defmodule EcbolicTest do
   use ExUnit.Case
-  doctest Helper
+  doctest Ecbolic
 
   test "returns help for one or multiple function" do
-    assert Helper.help(:hello) == "returns `:world`"
+    assert Ecbolic.help(:hello) == "returns `:world`"
 
-    assert Helper.help([:hello_there, :rem]) == %{
+    assert Ecbolic.help([:hello_there, :rem]) == %{
              hello_there: "General Kenobi",
              rem: "who is that?"
     }
   end
 
-
-  test "returns help for all modules" do
-    assert Helper.help() ==  
+test "returns help for all modules" do
+    assert Ecbolic.help() ==  
       %{
              hello_there: "General Kenobi",
              ora_ora_ora_ora: "muda muda muda muda!",

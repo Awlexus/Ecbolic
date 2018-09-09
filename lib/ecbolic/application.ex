@@ -1,12 +1,12 @@
-defmodule Helper.Application do
+defmodule Ecbolic.Application do
   use Application
 
   def start(_type, _args) do
     children = [
-      Helper.Store
+      Ecbolic.Store
     ]
 
-    opts = [strategy: :one_for_one, name: Helper.Supervisor]
+    opts = [strategy: :one_for_one, name: Ecbolic.Supervisor]
     Supervisor.start_link(children, opts)
   end
 

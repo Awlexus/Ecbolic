@@ -1,6 +1,6 @@
-# Helper
+# Ecobolic
 
-A small library to @help your users. 
+A small library to help your chatbot's users. 
 
 This library aims to provide a simple way of declaring and accessing 
 documentations meant for users. This was build mainly to ease the implementation 
@@ -10,12 +10,12 @@ of the well-known `help` command, that many chat-bots provide.
 
 ### Declaring 
 
-The first step is to use the `Helper` module in the module you want to
+The first step is to use the `Ecbolic` module in the module you want to
 declare your documentations:
 
 ```elixir
 defmodule TestModule do
-  use Helper
+  use Ecbolic
 ```
 
 Then you can add document your functions like this:
@@ -24,7 +24,7 @@ Then you can add document your functions like this:
   @doc help: "returns `:world`"
 
   @doc """
-  It's thanks to the 1.7 elixir update you can add meta data with your docs
+  It's thanks to the 1.7 elixir update that we can add meta data to the @doc annotation
   """
   def hello, do: :world
 ```
@@ -37,32 +37,32 @@ Testmodule.load_help()
 
 
 ### Accessing
-To access the documentations you can call the function `Helper.help`, which comes in a variaty of forms:
+To access the documentations you can call the function `Ecbolic.help`, which comes in a variaty of forms:
 
-  -  Helper.help()
+  -  Ecbolic.help()
      Returns the documentation for all functions
-  -  Helper.help(functions)
+  -  Ecbolic.help(functions)
      Returns the documentaion for the given functions 
-  -  Helper.help(fuction)
+  -  Ecbolic.help(fuction)
      Returns the documentation for the given function
 
 #### Example
 
 ```elixir
-  iex> Helper.help(TestModule, :hello)
+  iex> Ecbolic.help(:hello)
   "returns `:world`"
 ```
 
 ### Formating
 
-The module `Helper.Pretty` provides some basic formating:
+The module `Ecbolic.Pretty` provides some basic formating:
 
 ```
-  iex(1)> Helper.Pretty.format(:hello)
+  iex(1)> Ecbolic.Pretty.format(:hello)
   "hello - returns `world`"
 ```
 
-You can provide your own format as a second parameter to `Helper.Pretty.format/2`.
+You can provide your own format as a second parameter to `Ecbolic.Pretty.format/2`.
 The default format is `":f - :h"`
 
 Currently these are the tokens available for formating:
@@ -77,7 +77,7 @@ Currently these are the tokens available for formating:
 
     Example:
     ```elixir
-      iex(1)> Helper.Pretty.format([:hello, :long_function_name]":f:a - :h")
+      iex(1)> Ecbolic.Pretty.format([:hello, :long_function_name]":f:a - :h")
       [
       	"hello              - returns `world`",
 	"long_function_name - Long description"
@@ -89,17 +89,17 @@ Currently these are the tokens available for formating:
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `helper` to your list of dependencies in `mix.exs`:
+by adding `ecbolic` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:helper, "~> 0.1.0"}
+    {:ecbolic, "~> 0.1.0"}
   ]
 end
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/helper](https://hexdocs.pm/helper).
+be found at [https://hexdocs.pm/ecbolic](https://hexdocs.pm/ecbolic).
 

@@ -1,10 +1,10 @@
-defmodule Helper do
-  alias Helper.Store
+defmodule Ecbolic do
+  alias Ecbolic.Store
 
   defmacro __using__(_opts) do
     quote do
       def load_help do
-        Helper.Store.load(__MODULE__)
+        Ecbolic.Store.load(__MODULE__)
       end
     end
   end
