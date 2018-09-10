@@ -3,31 +3,27 @@ defmodule Ecbolic.Store do
 
   require Logger
 
+  alias Ecbolic.Help
+
   def start_link(opts) do
     opts = Keyword.put(opts, :name, __MODULE__)
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   def init(:ok) do
-    {:ok, %{}}
+    {:ok, []}
   end
 
   def load(module) do
     GenServer.call(__MODULE__, {:load_help, module})
   end
 
-  def store(action, help) do
-    with {:ok, ^action} <- GenServer.call(__MODULE__, {:store, action, help}) do
-      Logger.debug(fn -> "Added: function #{action}" end)
-      {:ok, action}
-    else
-      _error ->
-        Logger.error(fn -> "Something went wrong" end)
-    end
-  end
-
   def all do
     GenServer.call(__MODULE__, :all)
+  end
+
+  def all_grouped do
+    GenServer.call(__MODULE__, :all_grouped)
   end
 
   def lookup(actions) when is_list(actions) do
@@ -38,52 +34,55 @@ defmodule Ecbolic.Store do
     GenServer.call(__MODULE__, {:lookup, action})
   end
 
+  def group(group) do
+    GenServer.call(__MODULE__, {:group, group})
+  end
+
   ## Callbacks ##
 
-  # def handle_call(:all, _from, state) do
   def handle_call(:all, _from, state) do
     {:reply, state, state}
   end
 
+  def handle_call(:all_grouped, _from, state) do
+    groups =
+      state
+      |> Stream.map(&{&1.help_group, &1})
+      |> Enum.reduce(%{}, &merge_groups/2)
+
+    {:reply, {:ok, groups}, state}
+  end
+
+  def handle_call({:group, group}, _from, state) do
+    functions = 
+      state 
+      |> Enum.filter(& &1.help_group == group)
+
+    {:reply, {:ok, functions}, state}
+  end
+
   def handle_call({:load_help, module}, _from, state) do
+    entries = Help.to_help_entries(module)
     Logger.debug(fn -> "Loaded: module #{module}" end)
 
-    {:reply, :ok, merge(state, module)}
+    {:reply, :ok, state ++ entries}
   end
 
   def handle_call({:lookup, action}, _from, state) do
-    help = Map.get(state, action, "")
+    help = Enum.find(state, &(&1.help_alias == action))
 
     {:reply, {:ok, help}, state}
   end
 
   def handle_call({:lookup_multiple, actions}, _from, state) do
-    help = Map.take(state, actions)
+    help = Enum.filter(state, &(&1.help_alias in actions))
 
     {:reply, {:ok, help}, state}
   end
 
-  defp merge state, module do
-    module
-    |> help_from()
-    |> Map.merge(state, fn _, _, v2 -> v2 end)
+  defp merge_groups({group, fun}, acc) do
+    Map.merge(acc, %{group => fun}, fn _, v1, v2 ->
+      Map.merge(v1, v2)
+    end)
   end
-
-  defp help_from module do
-    Code.fetch_docs(module)
-    |> functions
-    |> Enum.map(&func_docs/1)
-    |> Enum.reject(fn x -> x == nil end)
-    |> Enum.into(%{})
-  end
-
-  defp functions({:docs_v1, _anno, :elixir, _format, _moduledoc, _meta, entries}) do
-    entries
-  end
-
-  def func_docs({{:function, name, _arity}, _anno, _signature, _doc, %{help: help}}) do
-    {name, help}
-  end
-
-  def func_docs(_), do: nil
 end
