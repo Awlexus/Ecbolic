@@ -1,6 +1,6 @@
 # Ecobolic
 
-A small library to help your chatbot's users. 
+A small library that should ease the implementation of a !help feature in chat bot
 
 This library aims to provide a simple way of declaring and accessing 
 documentations meant for users. This was build mainly to ease the implementation 
