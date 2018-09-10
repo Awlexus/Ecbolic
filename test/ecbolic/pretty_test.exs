@@ -32,7 +32,7 @@ defmodule PrettyTest do
   end
 
   test "alignment" do
-    help = Ecbolic.Pretty.format([:hello, :rem], ":f:a - :h")
+    help = Pretty.format([:hello, :rem], ":f:a - :h")
 
     assert help == "hello - returns `:world`\nrem   - who is that?"
   end

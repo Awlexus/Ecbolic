@@ -5,6 +5,7 @@ defmodule Ecbolic.Pretty do
     Store.all()
     |> Enum.map(&apply_tokens(&1, format))
     |> align()
+    |> Enum.sort(&lexographical_compare/2)
     |> Enum.join("\n")
   end
 
@@ -16,8 +17,11 @@ defmodule Ecbolic.Pretty do
 
   def format(names, format) when is_list(names) do
     with {:ok, entries} <- Store.lookup(names) do
-      Enum.map(entries, &apply_tokens(&1, format))
+      entries
+      |> Enum.map(&{&1.help_alias, &1.help})
+      |> Enum.map(&apply_tokens(&1, format))
       |> align()
+      |> Enum.sort(&lexographical_compare/2)
       |> Enum.join("\n")
     end
   end

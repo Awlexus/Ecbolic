@@ -8,18 +8,29 @@ defmodule EcbolicTest do
     assert Ecbolic.help([:hello_there, :rem]) == %{
              hello_there: "General Kenobi",
              rem: "who is that?"
-    }
+           }
   end
 
-test "returns help for all modules" do
-    assert Ecbolic.help() ==  
-      %{
-             hello_there: "General Kenobi",
-             ora_ora_ora_ora: "muda muda muda muda!",
-             hello: "returns `:world`",
-             echo: "Repeats what you just said",
-             rem: "who is that?"
-      }
+  test "gets help for a group of commands" do
+    assert Ecbolic.help_group(:group) ==
+             [
+               %Ecbolic.Help{
+                 help: "this is a function inside of a group",
+                 help_alias: :group_function,
+                 help_group: :group
+               }
+             ]
   end
 
+  test "Returns nil when function not found" do
+    assert Ecbolic.help(:does_not_exist) == nil
+  end
+
+  test "Returns an empty map when functions not found" do
+    assert Ecbolic.help([:does_not, :exist]) == %{}
+  end
+
+  test "Returns an empty list when the group was not found" do
+    assert Ecbolic.help_group(:does_not_exist) == []
+  end
 end
