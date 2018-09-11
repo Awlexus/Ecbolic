@@ -18,7 +18,7 @@ defmodule Ecbolic do
   def help(names) when is_list(names) do
     with {:ok, help_entries} <- Store.lookup(names) do
       help_entries
-      |> Enum.map(& {&1.help_alias, &1.help})
+      |> Enum.map(&{&1.help_alias, &1.help})
       |> Enum.into(%{})
     end
   end
@@ -27,6 +27,9 @@ defmodule Ecbolic do
     with {:ok, help_entry} <- Store.lookup(name),
          %Help{help: help} <- help_entry do
       help
+    else
+      {:error, _reason} ->
+        nil
     end
   end
 

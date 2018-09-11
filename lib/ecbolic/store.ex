@@ -82,9 +82,13 @@ defmodule Ecbolic.Store do
   end
 
   def handle_call({:lookup, action}, _from, state) do
-    help = Enum.find(state, &(&1.help_alias == action))
+    return = 
+      case Enum.find(state, &(&1.help_alias == action)) do
+        nil -> {:error, "Not found"}
+        help -> {:ok, help}
+      end
 
-    {:reply, {:ok, help}, state}
+    {:reply, return, state}
   end
 
   def handle_call({:lookup_multiple, actions}, _from, state) do
