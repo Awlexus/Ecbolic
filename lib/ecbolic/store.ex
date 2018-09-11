@@ -42,6 +42,10 @@ defmodule Ecbolic.Store do
     GenServer.call(__MODULE__, :group_names)
   end
 
+  def clear_store do
+    GenServer.call(__MODULE__, :clear_state)
+  end
+
   ## Callbacks ##
 
   def handle_call(:all, _from, state) do
@@ -79,6 +83,10 @@ defmodule Ecbolic.Store do
     Logger.debug(fn -> "Loaded: module #{module}" end)
 
     {:reply, :ok, state ++ entries}
+  end
+
+  def handle_call(:clear_state, _from, _state) do
+    {:reply, :ok, []}
   end
 
   def handle_call({:lookup, action}, _from, state) do
