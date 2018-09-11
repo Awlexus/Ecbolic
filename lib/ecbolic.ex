@@ -3,6 +3,8 @@ defmodule Ecbolic do
 
   defmacro __using__(_opts) do
     quote do
+      require Ecbolic
+
       def load_help do
         Ecbolic.Store.load(__MODULE__)
       end
@@ -36,6 +38,24 @@ defmodule Ecbolic do
   def help_group(group_name) do
     with {:ok, group} <- Store.group(group_name) do
       group
+    end
+  end
+
+  defmacro alias name do
+    help_attr(:help_alias, name)
+  end
+
+  defmacro group(group) do
+    help_attr(:help_group, group)
+  end
+
+  defmacro help_short(help) do
+    help_attr(:help, help)
+  end
+
+  defp help_attr(attr, val) do
+    quote do
+      @doc [unquote({attr, val})]
     end
   end
 end
