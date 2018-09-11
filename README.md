@@ -97,7 +97,7 @@ by adding `ecbolic` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ecbolic, "~> 0.2.2"}
+    {:ecbolic, "~> 0.2.3"}
   ]
 end
 ```
