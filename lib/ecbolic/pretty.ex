@@ -92,8 +92,16 @@ defmodule Ecbolic.Pretty do
 
   defp apply_tokens({name, help}, format) do
     format
-    |> String.replace(":f", Atom.to_string(name))
+    |> replace_function(name)
     |> String.replace(":h", help)
+  end
+
+  defp replace_function(str, name) when is_atom(name) do
+    String.replace(str, ":f", Atom.to_string(name))
+  end
+
+  defp replace_function(str, name) when is_binary(name) do
+    String.replace(str, ":f", name)
   end
 
   defp transpose(list) do
@@ -101,5 +109,4 @@ defmodule Ecbolic.Pretty do
     |> List.zip()
     |> Enum.map(&Tuple.to_list/1)
   end
-
 end
