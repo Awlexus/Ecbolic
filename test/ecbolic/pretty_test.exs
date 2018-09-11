@@ -36,4 +36,12 @@ defmodule PrettyTest do
 
     assert help == "hello - returns `:world`\nrem   - who is that?"
   end
+
+  test "can format groups" do
+    assert is_map(Pretty.format_all_groups()) == true
+  end
+
+  test "can format one group" do
+    assert is_binary(Pretty.format_group :group) == true
+  end
 end
