@@ -3,10 +3,18 @@ defmodule Ecbolic.Pretty do
 
   def format_all(format \\ ":f - :h") do
     Store.all()
-    |> Enum.map(&apply_tokens(&1, format))
-    |> align()
-    |> Enum.sort(&lexographical_compare/2)
-    |> Enum.join("\n")
+    |> format_entries(format)
+  end
+
+  def format_all_groups(format \\ ":f - :h") do
+    {:ok, groups} = Store.all_grouped()
+    for {k, v} <- groups, into: %{}, do: {k, format_entries(v, format)}
+  end
+
+  def format_group(group, format \\ ":f - :h") do
+    with {:ok, entries} <- Store.group(group) do
+      format_entries(entries, format)
+    end
   end
 
   def format(list, format \\ ":f - :h")
@@ -17,12 +25,7 @@ defmodule Ecbolic.Pretty do
 
   def format(names, format) when is_list(names) do
     with {:ok, entries} <- Store.lookup(names) do
-      entries
-      |> Enum.map(&{&1.help_alias, &1.help})
-      |> Enum.map(&apply_tokens(&1, format))
-      |> align()
-      |> Enum.sort(&lexographical_compare/2)
-      |> Enum.join("\n")
+      format_entries(entries, format)
     end
   end
 
@@ -62,6 +65,15 @@ defmodule Ecbolic.Pretty do
     end
   end
 
+  defp format_entries(entries, format) do
+    entries
+    |> Enum.map(&{&1.help_alias, &1.help})
+    |> Enum.map(&apply_tokens(&1, format))
+    |> align()
+    |> Enum.sort(&lexographical_compare/2)
+    |> Enum.join("\n")
+  end
+
   def lexographical_compare("", _), do: false
   def lexographical_compare(_, ""), do: true
 
@@ -89,4 +101,5 @@ defmodule Ecbolic.Pretty do
     |> List.zip()
     |> Enum.map(&Tuple.to_list/1)
   end
+
 end

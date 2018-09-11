@@ -38,6 +38,10 @@ defmodule Ecbolic.Store do
     GenServer.call(__MODULE__, {:group, group})
   end
 
+  def group_names do
+    GenServer.call(__MODULE__, :group_names)
+  end
+
   ## Callbacks ##
 
   def handle_call(:all, _from, state) do
@@ -47,18 +51,27 @@ defmodule Ecbolic.Store do
   def handle_call(:all_grouped, _from, state) do
     groups =
       state
-      |> Stream.map(&{&1.help_group, &1})
+      |> Stream.map(&{&1.help_group, [&1]})
       |> Enum.reduce(%{}, &merge_groups/2)
 
     {:reply, {:ok, groups}, state}
   end
 
   def handle_call({:group, group}, _from, state) do
-    functions = 
-      state 
-      |> Enum.filter(& &1.help_group == group)
+    functions =
+      state
+      |> Enum.filter(&(&1.help_group == group))
 
     {:reply, {:ok, functions}, state}
+  end
+
+  def handle_call(:group_names, _from, state) do
+    names =
+      state
+      |> Enum.reduce(MapSet.new(), &MapSet.put(&2, &1.help_group))
+      |> MapSet.to_list()
+
+    {:reply, {:ok, names}, state}
   end
 
   def handle_call({:load_help, module}, _from, state) do
@@ -81,8 +94,9 @@ defmodule Ecbolic.Store do
   end
 
   defp merge_groups({group, fun}, acc) do
-    Map.merge(acc, %{group => fun}, fn _, v1, v2 ->
-      Map.merge(v1, v2)
+    Map.merge(acc, %{group => fun}, fn 
+      _, v1, [v2] ->
+      [v2 | v1]
     end)
   end
 end
