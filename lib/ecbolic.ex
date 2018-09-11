@@ -42,18 +42,24 @@ defmodule Ecbolic do
   end
 
   defmacro alias name do
-    help_attr(:help_alias, name)
+    func_attr(:help_alias, name)
   end
 
   defmacro group(group) do
-    help_attr(:help_group, group)
+     module_attr(:help_group, group)
   end
 
   defmacro help_short(help) do
-    help_attr(:help, help)
+    func_attr(:help, help)
   end
 
-  defp help_attr(attr, val) do
+  defp module_attr(attr, val) do
+    quote do
+      @moduledoc [unquote({attr, val})]
+    end
+  end
+
+  defp func_attr(attr, val) do
     quote do
       @doc [unquote({attr, val})]
     end
