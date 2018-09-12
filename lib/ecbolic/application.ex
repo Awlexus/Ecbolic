@@ -1,6 +1,8 @@
 defmodule Ecbolic.Application do
   use Application
 
+  @moduledoc false
+
   def start(_type, _args) do
     children = [
       Ecbolic.Store

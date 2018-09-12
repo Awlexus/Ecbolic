@@ -21,11 +21,11 @@ defmodule TestModule do
 Then you can add document your functions like this:
 
 ```elixir
-@doc help: "returns `:world`"
 
 @doc """
 It's thanks to the 1.7 elixir update that we can add meta data to the @doc annotation
 """
+Ecbolic.help("returns `:world`")
 def hello, do: :world
 ```
 
@@ -35,21 +35,20 @@ At the start of your Application, or whenever you need it, you must load the doc
 Testmodule.load_help()
 ```
 
-
 ### Accessing
-To access the documentations you can call the function `Ecbolic.help`, which comes in a variaty of forms:
+To access the documentations you can call the function `Ecbolic.fetch_help`, which comes in a variaty of forms:
 
-  -  Ecbolic.help()
+  -  Ecbolic.fetch_help()
      Returns the documentation for all functions
-  -  Ecbolic.help(functions)
+  -  Ecbolic.fetch_help(functions)
      Returns the documentaion for the given functions 
-  -  Ecbolic.help(fuction)
+  -  Ecbolic.fetch_help(fuction)
      Returns the documentation for the given function
 
 #### Example
 
 ```elixir
-Ecbolic.help(:hello)
+Ecbolic.fetch_help(:hello)
 #=> "returns `:world`"
 ```
 
@@ -76,9 +75,9 @@ Currently these are the tokens available for formating:
   - `:a` 
   
   If multiple entries are supplied, this token will align the strings, 
-    by filling them with spaces, until they all end at the same position.
+  by filling them with spaces, until they all end at the same position.
 
-    Example:
+  ##### Example:
     ```elixir
     Ecbolic.Pretty.format([:hello, :long_function_name], ":f:a - :h")
     #=> [
@@ -87,7 +86,7 @@ Currently these are the tokens available for formating:
     ]
     ```
 
-  Note: if the function is not found, it'll be ignored
+  Note: if the function is not found, it'll be skipped
 
 ## Installation
 

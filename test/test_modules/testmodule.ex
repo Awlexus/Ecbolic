@@ -3,13 +3,13 @@ defmodule TestModule do
 
   @moduledoc false
 
-  Ecbolic.help_short "returns `:world`"
+  Ecbolic.help "returns `:world`"
   def hello, do: :world
 
-  Ecbolic.help_short "General Kenobi"
+  Ecbolic.help "General Kenobi"
   def hello_there, do: "General Kenobi"
 
-  Ecbolic.help_short "who is that?"
+  Ecbolic.help "who is that?"
   def rem, do: "who is that?"
 
   def meaningless, do: ""
