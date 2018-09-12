@@ -39,10 +39,13 @@ Testmodule.load_help()
 To access the documentations you can call the function `Ecbolic.fetch_help`, which comes in a variaty of forms:
 
   -  Ecbolic.fetch_help()
+  
      Returns the documentation for all functions
   -  Ecbolic.fetch_help(functions)
+  
      Returns the documentaion for the given functions 
   -  Ecbolic.fetch_help(fuction)
+  
      Returns the documentation for the given function
 
 #### Example
@@ -56,7 +59,7 @@ Ecbolic.fetch_help(:hello)
 
 The module `Ecbolic.Pretty` provides some basic formating:
 
-```
+```elixir
 Ecbolic.Pretty.format(:hello)
 #=> "hello - returns `world`"
 ```
