@@ -141,16 +141,8 @@ defmodule Ecbolic.Pretty do
 
   defp apply_tokens({name, help}, format) do
     format
-    |> replace_function(name)
+    |> String.replace(":f", to_string(name))
     |> String.replace(":h", help)
-  end
-
-  defp replace_function(str, name) when is_atom(name) do
-    String.replace(str, ":f", Atom.to_string(name))
-  end
-
-  defp replace_function(str, name) when is_binary(name) do
-    String.replace(str, ":f", name)
   end
 
   defp transpose(list) do
