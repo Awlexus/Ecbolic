@@ -65,7 +65,7 @@ defmodule Ecbolic.Store do
   @doc """
   Returns the help entry for the asked action. 
   """
-  @spec lookup([Ecbolic.atom_or_string]) :: {:ok, [help]} | {:error, String.t()}
+  @spec lookup(Ecbolic.atom_or_string) :: {:ok, help} | {:error, String.t()}
   def lookup(action) do
     GenServer.call(__MODULE__, {:lookup, action})
   end
