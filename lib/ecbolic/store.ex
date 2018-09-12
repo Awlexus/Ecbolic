@@ -55,7 +55,7 @@ defmodule Ecbolic.Store do
   def handle_call(:all_grouped, _from, state) do
     groups =
       state
-      |> Stream.map(&{&1.help_group, [&1]})
+      |> Enum.map(&{&1.help_group, [&1]})
       |> Enum.reduce(%{}, &merge_groups/2)
 
     {:reply, {:ok, groups}, state}
