@@ -87,9 +87,15 @@ defmodule Ecbolic.Pretty do
   def align([]), do: []
 
   def align(entries) do
-    split = Enum.map(entries, &String.split(&1, ":a", parts: 2))
+    {to_split, rejected} =
+      entries
+      |> Enum.split_with(&String.contains?(&1, ":a"))
 
-    unless split |> List.flatten() |> Enum.count() == 2 * Enum.count(entries) do
+    split =
+      to_split
+      |> Enum.map(&String.split(&1, ":a", parts: 2))
+
+    if Enum.empty? split do
       entries
     else
       # Transposing 
@@ -109,7 +115,7 @@ defmodule Ecbolic.Pretty do
         |> transpose()
         |> Enum.map(&Enum.join/1)
 
-      align(new_entries)
+      rejected ++ align(new_entries)
     end
   end
 

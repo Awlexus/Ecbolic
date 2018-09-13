@@ -11,7 +11,6 @@ defmodule PrettyTest do
   end
 
   test "lexographical compare" do
-
     words = ~w/Long list of words so many of them Gotta count them all/
 
     sorted = Enum.sort(words, &Pretty.lexographical_compare/2)
@@ -42,6 +41,17 @@ defmodule PrettyTest do
   end
 
   test "can format one group" do
-    assert is_binary(Pretty.format_group :group) == true
+    assert is_binary(Pretty.format_group(:group)) == true
+  end
+
+  test "aligns multiple times" do
+    assert Pretty.align(["aba:aaba:aaba", "a:aa:aa"]) == [
+             "abaabaaba",
+             "a  a  a"
+           ]
+  end
+
+  test "align can handle different lengths" do
+    assert Pretty.align(["aba:aaba:aba", "a:aa:aa", "a:aa"]) == ["a  a", "abaababa", "a  a  a"]
   end
 end
