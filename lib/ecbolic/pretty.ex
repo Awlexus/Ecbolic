@@ -84,9 +84,9 @@ defmodule Ecbolic.Pretty do
     end
   end
 
-  defp align([]), do: []
+  def align([]), do: []
 
-  defp align(entries) do
+  def align(entries) do
     split = Enum.map(entries, &String.split(&1, ":a", parts: 2))
 
     unless split |> List.flatten() |> Enum.count() == 2 * Enum.count(entries) do
