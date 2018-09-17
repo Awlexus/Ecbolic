@@ -154,7 +154,7 @@ defmodule Ecbolic do
   Sets the group for all functions in that module
   """
   defmacro group(group) do
-     module_attr(:help_group, group)
+     func_attr(:help_group, group)
   end
 
   @doc """
@@ -162,12 +162,6 @@ defmodule Ecbolic do
   """
   defmacro help(help) do
     func_attr(:help, help)
-  end
-
-  defp module_attr(attr, val) do
-    quote do
-      @moduledoc [unquote({attr, val})]
-    end
   end
 
   defp func_attr(attr, val) do
