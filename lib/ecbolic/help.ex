@@ -63,6 +63,7 @@ defmodule Ecbolic.Help do
       {:help_usage, usage}, acc -> Map.put(acc, :usage, usage)
       {:help_description, description}, acc -> Map.put(acc, :description, description)
       {:help_group, group}, acc -> Map.put(acc, :group, group)
+      _, acc -> acc
     end)
   end
 end
