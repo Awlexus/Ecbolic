@@ -78,8 +78,8 @@ defmodule Ecbolic.Pretty do
 
   @spec format(Ecbolic.atom_or_string(), String.t()) :: String.t()
   def format(name, format) do
-    with {:ok, %Help{help: help}} <- Store.lookup(name) do
-      apply_tokens({name, help}, format)
+    with {:ok, help} <- Store.lookup(name) do
+      apply_tokens(help, format)
       |> String.replace(":a", "")
     end
   end
@@ -151,7 +151,6 @@ defmodule Ecbolic.Pretty do
 
   defp format_entries(entries, format) do
     entries
-    |> Enum.map(&{&1.help_alias, &1.help})
     |> Enum.map(&apply_tokens(&1, format))
     |> align()
     |> Enum.sort(&lexographical_compare/2)
@@ -175,10 +174,12 @@ defmodule Ecbolic.Pretty do
     end
   end
 
-  defp apply_tokens({name, help}, format) do
+  defp apply_tokens(help, format) do
     format
-    |> String.replace(":f", to_string(name))
-    |> String.replace(":h", help)
+    |> String.replace(":f", to_string(help.name))
+    |> String.replace(":g", to_string(help.group))
+    |> String.replace(":u", help.usage || "")
+    |> String.replace(":h", help.description || "")
   end
 
   defp transpose(list) do

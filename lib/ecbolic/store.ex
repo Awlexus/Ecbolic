@@ -14,7 +14,7 @@ defmodule Ecbolic.Store do
   An entry used by `Ecbolic.Store` to store information about a
   function and related help-data
   """
-  @type help :: %Ecbolic.Help{help: String.t(), help_alias: Ecbolic.atom_or_string, help_group: Ecbolic.atom_or_string}
+  @type help :: Help.t()
 
   @doc false
   def start_link(opts) do
@@ -46,7 +46,7 @@ defmodule Ecbolic.Store do
   @doc """
   Returns all stored help entries, but mapped to their group
   """
-  @spec all_grouped() :: {:ok, %{Ecbolic.atom_or_string => [help]}}
+  @spec all_grouped() :: {:ok, %{Ecbolic.atom_or_string() => [help]}}
   def all_grouped do
     GenServer.call(__MODULE__, :all_grouped)
   end
@@ -57,7 +57,7 @@ defmodule Ecbolic.Store do
   This also means that if no function was found, it'll return an
   empty list.
   """
-  @spec lookup([Ecbolic.atom_or_string]) :: {:ok, [help]}
+  @spec lookup([Ecbolic.atom_or_string()]) :: {:ok, [help]}
   def lookup(functions) when is_list(functions) do
     GenServer.call(__MODULE__, {:lookup_multiple, functions})
   end
@@ -65,7 +65,7 @@ defmodule Ecbolic.Store do
   @doc """
   Returns the help entry for the asked action. 
   """
-  @spec lookup(Ecbolic.atom_or_string) :: {:ok, help} | {:error, String.t()}
+  @spec lookup(Ecbolic.atom_or_string()) :: {:ok, help} | {:error, String.t()}
   def lookup(action) do
     GenServer.call(__MODULE__, {:lookup, action})
   end
@@ -78,7 +78,7 @@ defmodule Ecbolic.Store do
   Note: Ungrouped functions are given the 
   `:default`-group
   """
-  @spec group(Ecbolic.atom_or_string) :: [help]
+  @spec group(Ecbolic.atom_or_string()) :: [help]
   def group(group) do
     GenServer.call(__MODULE__, {:group, group})
   end
@@ -86,14 +86,14 @@ defmodule Ecbolic.Store do
   @doc """
   Returns a list of all group names.
   """
-  @spec group_names() :: [Ecbolic.atom_or_string]
+  @spec group_names() :: [Ecbolic.atom_or_string()]
   def group_names do
     GenServer.call(__MODULE__, :group_names)
   end
 
   @doc """
   Clears the internal state of the store. 
-  
+
   This is neccessary if you want to reload 
   the entries. If you try to do so, without
   calling this function first, you'll have 
@@ -113,7 +113,7 @@ defmodule Ecbolic.Store do
   def handle_call(:all_grouped, _from, state) do
     groups =
       state
-      |> Enum.map(&{&1.help_group, [&1]})
+      |> Enum.map(&{&1.group, [&1]})
       |> Enum.reduce(%{}, &merge_groups/2)
 
     {:reply, {:ok, groups}, state}
@@ -122,7 +122,7 @@ defmodule Ecbolic.Store do
   def handle_call({:group, group}, _from, state) do
     functions =
       state
-      |> Enum.filter(&(&1.help_group == group))
+      |> Enum.filter(&(&1.group == group))
 
     {:reply, {:ok, functions}, state}
   end
@@ -130,7 +130,7 @@ defmodule Ecbolic.Store do
   def handle_call(:group_names, _from, state) do
     names =
       state
-      |> Enum.reduce(MapSet.new(), &MapSet.put(&2, &1.help_group))
+      |> Enum.reduce(MapSet.new(), &MapSet.put(&2, &1.group))
       |> MapSet.to_list()
 
     {:reply, {:ok, names}, state}
@@ -148,8 +148,8 @@ defmodule Ecbolic.Store do
   end
 
   def handle_call({:lookup, action}, _from, state) do
-    return = 
-      case Enum.find(state, &(&1.help_alias == action)) do
+    return =
+      case Enum.find(state, &(&1.name == action)) do
         nil -> {:error, "Not found"}
         help -> {:ok, help}
       end
@@ -158,15 +158,15 @@ defmodule Ecbolic.Store do
   end
 
   def handle_call({:lookup_multiple, functions}, _from, state) do
-    help = Enum.filter(state, &(&1.help_alias in functions))
+    help = Enum.filter(state, &(&1.name in functions))
 
     {:reply, {:ok, help}, state}
   end
 
   defp merge_groups({group, fun}, acc) do
-    Map.merge(acc, %{group => fun}, fn 
+    Map.merge(acc, %{group => fun}, fn
       _, v1, [v2] ->
-      [v2 | v1]
+        [v2 | v1]
     end)
   end
 end

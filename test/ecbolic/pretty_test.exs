@@ -54,4 +54,8 @@ defmodule PrettyTest do
   test "align can handle different lengths" do
     assert Pretty.align(["aba:aaba:aba", "a:aa:aa", "a:aa"]) == ["a  a", "abaababa", "a  a  a"]
   end
+
+  test "uses usage" do
+    assert Pretty.format(:echo, ":u") == "echo <text:str>"
+  end
 end

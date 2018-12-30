@@ -95,9 +95,7 @@ defmodule Ecbolic do
   """
   @spec fetch_help() :: %{atom_or_string => String.t()}
   def fetch_help do
-    Store.all()
-    |> Enum.map(fn %Help{help_alias: name, help: help} -> {name, help} end)
-    |> Enum.into(%{})
+    to_map(Store.all())
   end
 
   @doc """
@@ -105,12 +103,10 @@ defmodule Ecbolic do
   function is mapped it's documentation
   Will return an empty map, in none was found
   """
-  @spec fetch_help([atom_or_string]) :: %{atom_or_string => String.t()}
+  @spec fetch_help(atom_or_string | [atom_or_string]) :: %{atom_or_string => String.t()}
   def fetch_help(names) when is_list(names) do
     with {:ok, help_entries} <- Store.lookup(names) do
-      help_entries
-      |> Enum.map(&{&1.help_alias, &1.help})
-      |> Enum.into(%{})
+      to_map(help_entries)
     end
   end
 
@@ -120,9 +116,8 @@ defmodule Ecbolic do
   """
   @spec fetch_help(atom_or_string) :: String.t()
   def fetch_help(name) do
-    with {:ok, help_entry} <- Store.lookup(name),
-         %Help{help: help} <- help_entry do
-      help
+    with {:ok, help_entry} <- Store.lookup(name) do
+      help_entry
     else
       {:error, _reason} ->
         nil
@@ -136,9 +131,7 @@ defmodule Ecbolic do
   @spec help_group(atom_or_string) :: %{atom_or_string => String.t()}
   def help_group(group_name) do
     with {:ok, group} <- Store.group(group_name) do
-      group
-      |> Enum.map(&{&1.help_alias, &1.help})
-      |> Enum.into(%{})
+      to_map(group)
     end
   end
 
@@ -161,7 +154,11 @@ defmodule Ecbolic do
   Creates a documentation for the function below
   """
   defmacro help(help) do
-    func_attr(:help, help)
+    func_attr(:help_description, help)
+  end
+
+  defmacro usage(usage) do
+    func_attr(:help_usage, usage)
   end
 
   defp func_attr(attr, val) do
@@ -174,5 +171,12 @@ defmodule Ecbolic do
     quote do
       @moduledoc [unquote({attr, val})]
     end
+  end
+
+  defp to_map(help) do
+    help
+    |> List.wrap()
+    |> Enum.map(fn %Help{name: name} = help -> {name, help} end)
+    |> Enum.into(%{})
   end
 end

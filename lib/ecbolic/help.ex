@@ -1,8 +1,14 @@
 defmodule Ecbolic.Help do
   alias Ecbolic.Help
 
-  defstruct help_group: :default, help: nil, help_alias: nil
-  @type t :: %Help{help_group: atom, help: atom, help_alias: String.t()}
+  defstruct group: :default, description: nil, name: nil, usage: nil
+
+  @type t :: %Help{
+          group: atom,
+          name: String.t(),
+          description: String.t(),
+          usage: String.t()
+        }
 
   @doc """
   Goes through the documentation of a module, parses it's meta
@@ -17,16 +23,29 @@ defmodule Ecbolic.Help do
     {:docs_v1, _anno, :elixir, _format, _meta, module_doc, docs} = Code.fetch_docs(module)
 
     docs
-    |> Enum.reduce([], &meta_data/2)
-    |> Enum.map(&add_group(&1, module_doc))
-    |> Enum.map(&struct(Help, &1))
+    |> Stream.filter(&has_help?/1)
+    |> Stream.map(&meta_data/1)
+    |> Stream.map(&add_group(&1, module_doc))
+    |> Stream.map(&to_keymap/1)
+    |> Stream.map(&struct(Help, &1))
+    |> Enum.into([])
   end
 
-  defp meta_data(doc, acc) do
+  defp has_help?({_, _, _, _, %{help_description: _}}) do
+    true
+  end
+
+  defp has_help?(_) do
+    false
+  end
+
+  defp meta_data(doc) do
     case doc do
-      {_, _, _, _, %{help: _, help_alias: _} = meta} -> [meta | acc]
-      {{_, name, _}, _, _, _, %{help: _} = meta} -> [Map.merge(meta, %{help_alias: name}) | acc]
-      _ -> acc
+      {_, _, _, _, %{help_description: _, help_alias: _} = meta} ->
+        meta
+
+      {{_, name, _}, _, _, _, %{help_description: _} = meta} ->
+        Map.put(meta, :help_alias, name)
     end
   end
 
@@ -36,5 +55,14 @@ defmodule Ecbolic.Help do
 
   defp add_group(meta, _) do
     meta
+  end
+
+  defp to_keymap(map) do
+    Enum.reduce(map, %{}, fn
+      {:help_alias, name}, acc -> Map.put(acc, :name, name)
+      {:help_usage, usage}, acc -> Map.put(acc, :usage, usage)
+      {:help_description, description}, acc -> Map.put(acc, :description, description)
+      {:help_group, group}, acc -> Map.put(acc, :group, group)
+    end)
   end
 end

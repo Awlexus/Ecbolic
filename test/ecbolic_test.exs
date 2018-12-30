@@ -3,18 +3,24 @@ defmodule EcbolicTest do
   doctest Ecbolic
 
   test "returns help for one or multiple function" do
-    assert Ecbolic.fetch_help(:hello) == "returns `:world`"
+    assert Ecbolic.fetch_help(:hello).description == "returns `:world`"
 
-    assert Ecbolic.fetch_help([:hello_there, :rem]) == %{
-             hello_there: "General Kenobi",
-             rem: "who is that?"
-           }
+    help =
+      [:hello_there, :rem]
+      |> Ecbolic.fetch_help()
+      |> Enum.map(fn {key, help} -> {key, help.description} end)
+      |> Enum.into(%{})
+
+    assert help ==
+             %{
+               hello_there: "General Kenobi",
+               rem: "who is that?"
+             }
   end
 
   test "gets help for a group of commands" do
-    assert Ecbolic.help_group(:group) == %{
-             group_function: "this is a function inside of a group"
-           }
+    assert Ecbolic.help_group(:group)[:group_function].description ==
+             "this is a function inside of a group"
   end
 
   test "Returns nil when function not found" do
