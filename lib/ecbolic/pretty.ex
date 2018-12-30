@@ -1,9 +1,9 @@
 defmodule Ecbolic.Pretty do
   @moduledoc """
-  This module provides small formating for when you want 
-  to display your docs. 
+  This module provides small formating for when you want
+  to display your docs.
 
-  All functions intended for formating can be supplied 
+  All functions intended for formating can be supplied
   with a string, which allows you to use function names,
   help and such. The default format is `":f - :h`
 
@@ -11,20 +11,20 @@ defmodule Ecbolic.Pretty do
 
   Inserts the name function of the function
 
-  - :h 
+  - :h
 
   Inserts the documentation for the function
 
   - :a
 
   Aligns all documentations up to this point. This only
-  works with functions that format multiple functions. 
+  works with functions that format multiple functions.
 
   ## Example output
 
   ```elixir
   Ecbolic.Pretty.format([:hello, :long_function_name], ":f:a - :h")
-  #=> 
+  #=>
   "hello              - returns `world`",
   "long_function_name - Long description"
   ```
@@ -32,19 +32,19 @@ defmodule Ecbolic.Pretty do
   alias Ecbolic.{Store, Help}
 
   @doc """
-  Formats all functions according to the given format 
+  Formats all functions according to the given format
   """
-  @spec format_all(String.t()) :: String.t
+  @spec format_all(String.t()) :: String.t()
   def format_all(format \\ ":f - :h") do
     Store.all()
     |> format_entries(format)
   end
 
   @doc """
-  Formats all functions according to the given format, 
-  but clustered by their group. 
+  Formats all functions according to the given format,
+  but clustered by their group.
   """
-  @spec format_all_groups(String.t()) :: %{Ecbolic.atom_or_string => String.t()}
+  @spec format_all_groups(String.t()) :: %{Ecbolic.atom_or_string() => String.t()}
   def format_all_groups(format \\ ":f - :h") do
     {:ok, groups} = Store.all_grouped()
     for {k, v} <- groups, into: %{}, do: {k, format_entries(v, format)}
@@ -53,7 +53,7 @@ defmodule Ecbolic.Pretty do
   @doc """
   Formats all functions that belong to the given group
   """
-  @spec format_group(Ecbolic.atom_or_string, String.t()) :: String.t()
+  @spec format_group(Ecbolic.atom_or_string(), String.t()) :: String.t()
   def format_group(group, format \\ ":f - :h") do
     with {:ok, entries} <- Store.group(group) do
       format_entries(entries, format)
@@ -69,14 +69,14 @@ defmodule Ecbolic.Pretty do
 
   def format(nil, _), do: []
 
-  @spec format([Ecbolic.atom_or_string], String.t()) :: String.t()
+  @spec format([Ecbolic.atom_or_string()], String.t()) :: String.t()
   def format(names, format) when is_list(names) do
     with {:ok, entries} <- Store.lookup(names) do
       format_entries(entries, format)
     end
   end
 
-  @spec format(Ecbolic.atom_or_string, String.t()) :: String.t()
+  @spec format(Ecbolic.atom_or_string(), String.t()) :: String.t()
   def format(name, format) do
     with {:ok, %Help{help: help}} <- Store.lookup(name) do
       apply_tokens({name, help}, format)
@@ -84,6 +84,36 @@ defmodule Ecbolic.Pretty do
     end
   end
 
+  @doc """
+  Aligns multiple strings using tokens
+
+  This function adds spaces where the tokens are places, 
+  so that the Strings before the token are aligned
+
+    ## Examples
+
+    iex>Ecbolic.Pretty.align [ \
+    "aaaaaaaaaa :a - 100.00:a%", \
+    "aaaaaaaaa :a - 20.50:a%", \
+    "aaaaaaaa :a - 19.53:a%", \
+    "aaaaaaa :a - 17.42:a%", \
+    "aaaaaa :a - 17.29:a%", \
+    "aaaaa :a - 16.48:a%", \
+    "aaaa :a - 15.75:a%", \
+    "aaa :a - 15.10:a%" \
+    ]
+    [ \
+      "aaaaaaaaaa  - 100.00%", \
+      "aaaaaaaaa   - 20.50 %", \
+      "aaaaaaaa    - 19.53 %", \
+      "aaaaaaa     - 17.42 %", \
+      "aaaaaa      - 17.29 %", \
+      "aaaaa       - 16.48 %", \
+      "aaaa        - 15.75 %", \
+      "aaa         - 15.10 %" \
+    ]
+
+  """
   def align([]), do: []
 
   def align(entries) do
@@ -95,10 +125,10 @@ defmodule Ecbolic.Pretty do
       to_split
       |> Enum.map(&String.split(&1, ":a", parts: 2))
 
-    if Enum.empty? split do
+    if Enum.empty?(split) do
       entries
     else
-      # Transposing 
+      # Transposing
       [to_align, rest] = transpose(split)
 
       max_length =

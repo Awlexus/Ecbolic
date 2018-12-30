@@ -76,7 +76,7 @@ defmodule Ecbolic do
   by default.
 
   """
-  @type atom_or_string :: atom | String.t
+  @type atom_or_string :: atom | String.t()
   alias Ecbolic.{Store, Help}
 
   defmacro __using__(_opts) do
@@ -104,7 +104,7 @@ defmodule Ecbolic do
   Returns all requested help entries as a map, where each 
   function is mapped it's documentation
   Will return an empty map, in none was found
-  """   
+  """
   @spec fetch_help([atom_or_string]) :: %{atom_or_string => String.t()}
   def fetch_help(names) when is_list(names) do
     with {:ok, help_entries} <- Store.lookup(names) do
@@ -133,7 +133,7 @@ defmodule Ecbolic do
   Returns all functions in the given group, mapped to their
   documentation
   """
-  @spec help_group(atom_or_string) :: %{atom_or_string => String.t}
+  @spec help_group(atom_or_string) :: %{atom_or_string => String.t()}
   def help_group(group_name) do
     with {:ok, group} <- Store.group(group_name) do
       group
@@ -154,7 +154,7 @@ defmodule Ecbolic do
   Sets the group for all functions in that module
   """
   defmacro group(group) do
-     func_attr(:help_group, group)
+    module_attr(:help_group, group)
   end
 
   @doc """
@@ -167,6 +167,12 @@ defmodule Ecbolic do
   defp func_attr(attr, val) do
     quote do
       @doc [unquote({attr, val})]
+    end
+  end
+
+  defp module_attr(attr, val) do
+    quote do
+      @moduledoc [unquote({attr, val})]
     end
   end
 end
