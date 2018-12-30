@@ -1,11 +1,16 @@
 defmodule Ecbolic.Help do
   alias Ecbolic.Help
 
+  @moduledoc """
+  Stores information about a Function related to help
+  """
+
   defstruct group: :default, description: nil, name: nil, usage: nil
 
+  @type atom_or_string :: atom | String.t()
   @type t :: %Help{
-          group: atom,
-          name: String.t(),
+          group: atom_or_string,
+          name: atom_or_string,
           description: String.t(),
           usage: String.t()
         }
@@ -18,7 +23,7 @@ defmodule Ecbolic.Help do
   See `Ecbolic` information on how to add helping meta data to
   a function
   """
-  @spec to_help_entries(atom) :: [Help.t()]
+  @spec to_help_entries(module) :: [Help.t()]
   def to_help_entries(module) do
     {:docs_v1, _anno, :elixir, _format, _meta, module_doc, docs} = Code.fetch_docs(module)
 

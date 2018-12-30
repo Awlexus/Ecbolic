@@ -72,11 +72,9 @@ defmodule Ecbolic do
   def hello_there, do: "General Kenobi"
   ```
 
-  Ungrouped functions, will be grouped with `:default`
-  by default.
+  Ungrouped functions, will receive the `:default` group.
 
   """
-  @type atom_or_string :: atom | String.t()
   alias Ecbolic.{Store, Help}
 
   defmacro __using__(_opts) do
@@ -93,7 +91,7 @@ defmodule Ecbolic do
   Returns all help entries as a map, where each function
   is mapped it's documentation
   """
-  @spec fetch_help() :: %{atom_or_string => String.t()}
+  @spec fetch_help() :: %{Help.atom_or_string() => Help.t()}
   def fetch_help do
     to_map(Store.all())
   end
@@ -103,7 +101,9 @@ defmodule Ecbolic do
   function is mapped it's documentation
   Will return an empty map, in none was found
   """
-  @spec fetch_help(atom_or_string | [atom_or_string]) :: %{atom_or_string => String.t()}
+  @spec fetch_help(Help.atom_or_string() | [Help.atom_or_string()]) :: %{
+          Help.atom_or_string() => Help.t()
+        }
   def fetch_help(names) when is_list(names) do
     with {:ok, help_entries} <- Store.lookup(names) do
       to_map(help_entries)
@@ -114,7 +114,7 @@ defmodule Ecbolic do
   Returns the documentation for the one requested function. 
   Will return nil, if it was not found
   """
-  @spec fetch_help(atom_or_string) :: String.t()
+  @spec fetch_help(Help.atom_or_string()) :: Help.t()
   def fetch_help(name) do
     with {:ok, help_entry} <- Store.lookup(name) do
       help_entry
@@ -128,7 +128,7 @@ defmodule Ecbolic do
   Returns all functions in the given group, mapped to their
   documentation
   """
-  @spec help_group(atom_or_string) :: %{atom_or_string => String.t()}
+  @spec help_group(Help.atom_or_string()) :: %{Help.atom_or_string() => Help.t()}
   def help_group(group_name) do
     with {:ok, group} <- Store.group(group_name) do
       to_map(group)
@@ -139,6 +139,7 @@ defmodule Ecbolic do
   Aliases the name by with the documentation for a functions
   is accessed
   """
+  @spec alias(Help.atom_or_string()) :: term
   defmacro alias name do
     func_attr(:help_alias, name)
   end
@@ -146,6 +147,7 @@ defmodule Ecbolic do
   @doc """
   Sets the group for all functions in that module
   """
+  @spec group(Help.atom_or_string()) :: term
   defmacro group(group) do
     module_attr(:help_group, group)
   end
@@ -153,10 +155,12 @@ defmodule Ecbolic do
   @doc """
   Creates a documentation for the function below
   """
+  @spec group(String.t()) :: term
   defmacro help(help) do
     func_attr(:help_description, help)
   end
 
+  @spec usage(String.t()) :: term
   defmacro usage(usage) do
     func_attr(:help_usage, usage)
   end

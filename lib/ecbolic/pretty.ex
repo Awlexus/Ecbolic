@@ -13,7 +13,11 @@ defmodule Ecbolic.Pretty do
 
   - :h
 
-  Inserts the documentation for the function
+  Inserts the documentation of the function
+
+  - :u
+
+  Inserts the usage of a function
 
   - :a
 
@@ -92,28 +96,29 @@ defmodule Ecbolic.Pretty do
 
     ## Examples
 
-    iex>Ecbolic.Pretty.align [ \
-    "aaaaaaaaaa :a - 100.00:a%", \
-    "aaaaaaaaa :a - 20.50:a%", \
-    "aaaaaaaa :a - 19.53:a%", \
-    "aaaaaaa :a - 17.42:a%", \
-    "aaaaaa :a - 17.29:a%", \
-    "aaaaa :a - 16.48:a%", \
-    "aaaa :a - 15.75:a%", \
-    "aaa :a - 15.10:a%" \
-    ]
-    [ \
-      "aaaaaaaaaa  - 100.00%", \
-      "aaaaaaaaa   - 20.50 %", \
-      "aaaaaaaa    - 19.53 %", \
-      "aaaaaaa     - 17.42 %", \
-      "aaaaaa      - 17.29 %", \
-      "aaaaa       - 16.48 %", \
-      "aaaa        - 15.75 %", \
-      "aaa         - 15.10 %" \
-    ]
+      iex>Ecbolic.Pretty.align [ 
+      ...>  "aaaaaaaaaa :a - 100.00:a%", 
+      ...>  "aaaaaaaaa :a - 20.50:a%", 
+      ...>  "aaaaaaaa :a - 19.53:a%", 
+      ...>  "aaaaaaa :a - 17.42:a%", 
+      ...>  "aaaaaa :a - 17.29:a%", 
+      ...>  "aaaaa :a - 16.48:a%", 
+      ...>  "aaaa :a - 15.75:a%", 
+      ...>  "aaa :a - 15.10:a%" 
+      ...>]
+      [ 
+        "aaaaaaaaaa  - 100.00%", 
+        "aaaaaaaaa   - 20.50 %", 
+        "aaaaaaaa    - 19.53 %", 
+        "aaaaaaa     - 17.42 %", 
+        "aaaaaa      - 17.29 %", 
+        "aaaaa       - 16.48 %", 
+        "aaaa        - 15.75 %", 
+        "aaa         - 15.10 %" 
+      ]
 
   """
+  @spec align([String.t()]) :: [String.t()]
   def align([]), do: []
 
   def align(entries) do
